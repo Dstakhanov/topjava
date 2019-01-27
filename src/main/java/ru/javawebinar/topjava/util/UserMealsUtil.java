@@ -8,6 +8,12 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Comparator.comparing;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
@@ -25,8 +31,17 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExceed>  getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO return filtered list with correctly exceeded field
-        System.out.println("test");
-        return null;
+
+        Supplier<Stream<UserMeal>> streamSupplier = () -> mealList.stream()
+                .filter(userMeal -> (userMeal.getDateTime().toLocalTime().isAfter(startTime) && userMeal.getDateTime().toLocalTime().isBefore(endTime)))
+                .sorted(comparing(UserMeal::getDateTime));
+        int allCalories = streamSupplier.get()
+                .map(UserMeal::getCalories)
+                .reduce((cal1, cal2) -> (cal1 + cal2)).orElse(0);
+        List<UserMealWithExceed> mealWithExceeds = streamSupplier.get()
+                .map(userMeal -> new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), allCalories > caloriesPerDay))
+                .collect(Collectors.toList());
+
+        return mealWithExceeds;
     }
 }
