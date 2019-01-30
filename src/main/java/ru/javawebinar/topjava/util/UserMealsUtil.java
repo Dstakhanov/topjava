@@ -8,10 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 
 public class UserMealsUtil {
     public static void main(String[] args) {
