@@ -10,13 +10,14 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 
 @Repository
 public class InMemoryMealRepositoryImpl implements MealRepository {
-    private Map<Integer, Meal> repository = new ConcurrentHashMap<>();
-    private Map<Integer, Map<Integer, Meal>> userRepo = new HashMap<>();
+
+    private Map<Integer, Map<Integer, Meal>> userRepo = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
@@ -27,12 +28,16 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
+            Map<Integer, Meal> repository = userRepo.get(userId);
+            if (repository == null) {
+                repository = new HashMap<>();
+            }
             repository.put(meal.getId(), meal);
             userRepo.put(userId, repository);
             return meal;
         }
         // treat case: update, but absent in storage
-        if (userRepo.containsKey(userId)) {
+        if (userRepo.get(userId) != null) {
             return userRepo.get(userId).computeIfPresent(meal.getId(), (k, oldMeal) -> meal);
         }
         return null;
@@ -42,7 +47,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     @Override
     public boolean delete(int id, int userId) {
 
-        if (userRepo.containsKey(userId)) {
+        if (userRepo.get(userId) != null) {
             return userRepo.get(userId).entrySet().removeIf(entry -> (entry.getKey().equals(id)));
         }
         return false;
@@ -50,28 +55,26 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        if (userRepo.containsKey(userId)) {
+        if (userRepo.get(userId) != null) {
             return userRepo.get(userId).getOrDefault(id, null);
         }
         return null;
     }
 
     @Override
-    public List<Meal> getAll(int userId, LocalDate startDate, LocalDate endDate) {
-        List<Meal> listMeal = getAll(userId);
-        if (listMeal != null) {
-            return getAll(userId).stream()
-                    .filter(meal -> DateTimeUtil.isBetween(meal.getDateTime().toLocalDate(), startDate, endDate))
-                    .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                    .collect(toList());
-        }
-        return new ArrayList<>();
+    public List<Meal> getFiltered(int userId, LocalDate startDate, LocalDate endDate) {
+        return getWithFilter(userId, meal -> DateTimeUtil.isBetween(meal.getDateTime().toLocalDate(), startDate, endDate));
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        if (userRepo.containsKey(userId)) {
+        return getWithFilter(userId, meal -> true);
+    }
+
+    private List<Meal> getWithFilter(int userId, Predicate<Meal> filter) {
+        if (userRepo.get(userId) != null) {
             return userRepo.get(userId).values().stream()
+                    .filter(filter)
                     .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                     .collect(toList());
         }

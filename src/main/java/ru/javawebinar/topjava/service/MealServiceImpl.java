@@ -46,8 +46,8 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public List<MealTo> getAll(int userId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        return MealsUtil.getFilteredWithExcess(repository.getAll(userId, startDate, endDate),
+    public List<MealTo> getFiltered(int userId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+        return MealsUtil.getFilteredWithExcess(repository.getFiltered(userId, startDate, endDate),
                 authUserCaloriesPerDay(), startTime, endTime);
     }
 

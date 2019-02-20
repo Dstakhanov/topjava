@@ -23,14 +23,14 @@ public class MealRestController {
     @Autowired
     private MealService service;
 
-    public List<MealTo> getAll(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+    public List<MealTo> getFiltered(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
         log.info("getAll");
         startDate = (startDate == null) ? LocalDate.MIN : startDate;
         endDate = (endDate == null) ? LocalDate.MAX : endDate;
         startTime = (startTime == null) ? LocalTime.MIN : startTime;
         endTime = (endTime == null) ? LocalTime.MAX : endTime;
 
-        return service.getAll(authUserId(), startDate, startTime, endDate, endTime);
+        return service.getFiltered(authUserId(), startDate, startTime, endDate, endTime);
     }
 
     public List<MealTo> getAll() {

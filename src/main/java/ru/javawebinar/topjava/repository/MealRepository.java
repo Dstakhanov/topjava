@@ -12,7 +12,7 @@ public interface MealRepository {
 
     Meal get(int id, int userId);
 
-    List<Meal> getAll(int userId, LocalDate startDate, LocalDate endDate);
+    List<Meal> getFiltered(int userId, LocalDate startDate, LocalDate endDate);
 
     List<Meal> getAll(int userId);
 }

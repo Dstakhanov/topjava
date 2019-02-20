@@ -61,7 +61,7 @@ public class MealServlet extends HttpServlet {
                 int id = getId(request);
                 log.info("Delete {}", id);
                 mealRestController.delete(id);
-                response.sendRedirect(request.getHeader("referer"));
+                response.sendRedirect("meals");
                 break;
             case "create":
             case "update":
@@ -79,7 +79,7 @@ public class MealServlet extends HttpServlet {
                 String startTime = request.getParameter("startTime");
                 String endTime = request.getParameter("endTime");
 
-                request.setAttribute("meals", mealRestController.getAll(
+                request.setAttribute("meals", mealRestController.getFiltered(
                         startDate == null || startDate.equals("") ? null : LocalDate.parse(startDate),
                         startTime == null || startTime.equals("") ? null : LocalTime.parse(startTime),
                         endDate == null || endDate.equals("") ? null : LocalDate.parse(endDate),
