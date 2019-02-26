@@ -13,6 +13,8 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -31,13 +33,13 @@ public class MealServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void get() throws Exception {
-        Meal meal = service.get(MEAL_ID3, 100);
+        Meal meal = service.get(MEAL_ID3, USER_ID);
         assertMatch(meal, MEAL3);
     }
 
     @Test(expected = NotFoundException.class)
     public void delete() throws Exception {
-        service.delete(MEAL_ID, 10);
+        service.delete(MEAL_ID, ADMIN_ID);
     }
 
     @Test(expected = NotFoundException.class)
@@ -45,8 +47,8 @@ public class MealServiceTest {
         Meal updated = MEAL1;
         updated.setDescription("UpdatedNameMeal");
         updated.setCalories(330);
-        service.update(updated, 5);
-        assertMatch(service.get(MEAL_ID1, 5), updated);
+        service.update(updated, ADMIN_ID);
+        assertMatch(service.get(MEAL_ID1, ADMIN_ID), updated);
     }
 
 
