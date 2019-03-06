@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.time.LocalDateTime.of;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class MealTestData {
@@ -34,14 +34,14 @@ public class MealTestData {
     }
 
     public static void assertMatch(Meal actual, Meal expected) {
-        assertThat(actual).isEqualToComparingFieldByField(expected);
+        assertEquals(actual, expected);
     }
 
     public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
-        assertMatch(actual, Arrays.asList(expected));
+        assertEquals(actual, Arrays.asList(expected));
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        assertThat(actual).usingFieldByFieldElementComparator().isEqualTo(expected);
+        assertEquals(actual, expected);
     }
 }

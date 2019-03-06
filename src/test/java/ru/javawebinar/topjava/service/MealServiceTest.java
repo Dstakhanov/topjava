@@ -1,6 +1,9 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import ru.javawebinar.topjava.MyJUnitStopWatch;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -25,9 +29,18 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
+    @Rule
+    public MyJUnitStopWatch stopwatch = new MyJUnitStopWatch();
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     static {
         SLF4JBridgeHandler.install();
+    }
+
+    @AfterClass
+    public static void tearDown() throws Exception {
+        MyJUnitStopWatch.getTestStatistics().forEach(System.out::println);
     }
 
     @Autowired
@@ -42,6 +55,8 @@ public class MealServiceTest {
     @Test(expected = NotFoundException.class)
     public void deleteNotFound() throws Exception {
         service.delete(MEAL1_ID, 1);
+        thrown.expect(NotFoundException.class);
+        thrown = ExpectedException.none();
     }
 
     @Test
@@ -62,6 +77,8 @@ public class MealServiceTest {
     @Test(expected = NotFoundException.class)
     public void getNotFound() throws Exception {
         service.get(MEAL1_ID, ADMIN_ID);
+        thrown.expect(NotFoundException.class);
+        thrown = ExpectedException.none();
     }
 
     @Test
@@ -74,6 +91,8 @@ public class MealServiceTest {
     @Test(expected = NotFoundException.class)
     public void updateNotFound() throws Exception {
         service.update(MEAL1, ADMIN_ID);
+        thrown.expect(NotFoundException.class);
+        throw new NotFoundException("oops");
     }
 
     @Test
