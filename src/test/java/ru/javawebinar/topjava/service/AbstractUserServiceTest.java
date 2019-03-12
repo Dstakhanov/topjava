@@ -23,23 +23,11 @@ import java.util.List;
 
 import static ru.javawebinar.topjava.UserTestData.*;
 
-@ContextConfiguration({
-        "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
-})
-@RunWith(SpringRunner.class)
-@Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@ActiveProfiles(resolver = ActiveDbProfileResolver.class)
-public class UserServiceTest {
 
-    static {
-        // Only for postgres driver logging
-        // It uses java.util.logging and logged via jul-to-slf4j bridge
-        SLF4JBridgeHandler.install();
-    }
+public abstract class AbstractUserServiceTest extends AbstractUserMealServiceTest {
 
     @Autowired
-    private UserService service;
+    protected UserService service;
 
     @Autowired
     private CacheManager cacheManager;
@@ -105,4 +93,5 @@ public class UserServiceTest {
         List<User> all = service.getAll();
         assertMatch(all, ADMIN, USER);
     }
+
 }
