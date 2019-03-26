@@ -50,14 +50,16 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
+            addRoles(user);
         } else {
             if (namedParameterJdbcTemplate.update(
                     "UPDATE users SET name=:name, email=:email, password=:password, " +
                             "registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id", parameterSource) == 0) {
                 return null;
             }
+            deleteRoles(user);
+            addRoles(user);
         }
-        addRoles(user);
         return user;
     }
 
@@ -93,9 +95,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     }
 
     private void addRoles(User user) {
-        if (!user.isNew()) {
-            jdbcTemplate.update("DELETE FROM user_roles WHERE user_id=?", user.getId());
-        }
+
         List<Role> roles = new ArrayList<>(user.getRoles());
         if (!CollectionUtils.isEmpty(roles)) {
 
@@ -116,6 +116,10 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         }
     }
 
+    private void deleteRoles(User user) {
+        jdbcTemplate.update("DELETE FROM user_roles WHERE user_id=?", user.getId());
+    }
+
     private User setRoles(User user) {
         if (user != null) {
             List<Role> roles = jdbcTemplate.query("SELECT role FROM user_roles WHERE user_id=?",
@@ -125,7 +129,4 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         return user;
     }
 
-    private RowMapper<Role> getRole() {
-        return (rs, rowNum) -> Role.valueOf(rs.getString("role"));
-    }
 }
