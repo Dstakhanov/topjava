@@ -50,7 +50,6 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
-            addRoles(user);
         } else {
             if (namedParameterJdbcTemplate.update(
                     "UPDATE users SET name=:name, email=:email, password=:password, " +
@@ -58,8 +57,9 @@ public class JdbcUserRepositoryImpl implements UserRepository {
                 return null;
             }
             deleteRoles(user);
-            addRoles(user);
         }
+        addRoles(user);
+
         return user;
     }
 
