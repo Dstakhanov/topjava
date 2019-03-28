@@ -17,7 +17,7 @@
         <jdbc:script location="classpath:db/${jdbc.initLocation}"/>
         <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
     </jdbc:initialize-database>
-
+    <tx:annotation-driven/>
     <!-- Choose profile from (hsqldb, postgres) and (jdbc,datajpa,jpa) -->
 
     <beans profile="hsqldb">
@@ -100,9 +100,7 @@
             </property>
         </bean>
 
-        <tx:annotation-driven/>
-
-        <!-- Transaction manager for a single JPA EntityManagerFactory (alternative to JTA) -->
+       <!-- Transaction manager for a single JPA EntityManagerFactory (alternative to JTA) -->
         <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
               p:entityManagerFactory-ref="entityManagerFactory"/>
 
