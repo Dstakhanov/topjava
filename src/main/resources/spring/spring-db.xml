@@ -19,13 +19,30 @@
     </jdbc:initialize-database>
 
     <!-- Choose profile from (hsqldb, postgres) and (jdbc,datajpa,jpa) -->
-    <!-- Choose profile from (hsqldb, postgres) and (jdbc,datajpa,jpa) -->
 
     <tx:annotation-driven/>
 
     <beans profile="hsqldb">
         <context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>
 
+        <!--no pooling-->
+        <bean id="dataSource"
+              class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+              p:driverClassName="org.hsqldb.jdbcDriver"
+              p:url="${database.url}"
+              p:username="${database.username}"
+              p:password="${database.password}"/>
+    </beans>
+
+    <beans profile="postgres">
+        <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE"/>
+
+        <bean id="dataSource"
+              class="org.apache.tomcat.jdbc.pool.DataSource"
+              p:driverClassName="org.postgresql.Driver"
+              p:url="${database.url}"
+              p:username="${database.username}"
+              p:password="${database.password}"/>
     </beans>
 
     <beans profile="tomcat">
@@ -70,12 +87,12 @@
                     <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_SECOND_LEVEL_CACHE}" value="true"/>
                     <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_QUERY_CACHE}" value="false"/> <!--default-->
 
-<!--
-                    <entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_SCRIPTS_ACTION}" value="drop-and-create"/>
-                    <entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_SCRIPTS_CREATE_TARGET}" value="${TOPJAVA_ROOT}/config/ddl/create.ddl"/>
-                    <entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_SCRIPTS_DROP_TARGET}" value="${TOPJAVA_ROOT}/config/ddl/drop.ddl"/>
-                    <entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_AUTO}" value="create"/>
--->
+                    <!--
+                                        <entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_SCRIPTS_ACTION}" value="drop-and-create"/>
+                                        <entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_SCRIPTS_CREATE_TARGET}" value="${TOPJAVA_ROOT}/config/ddl/create.ddl"/>
+                                        <entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_SCRIPTS_DROP_TARGET}" value="${TOPJAVA_ROOT}/config/ddl/drop.ddl"/>
+                                        <entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_AUTO}" value="create"/>
+                    -->
                 </map>
             </property>
 
