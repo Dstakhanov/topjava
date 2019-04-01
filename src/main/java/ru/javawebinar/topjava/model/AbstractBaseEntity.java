@@ -1,5 +1,9 @@
 package ru.javawebinar.topjava.model;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import org.hibernate.Hibernate;
+import org.springframework.data.domain.Persistable;
+
 import javax.persistence.*;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
