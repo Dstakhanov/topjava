@@ -11,7 +11,7 @@ import java.util.Locale;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.*;
 
-public final class Formatters {
+public final class DateTimeFormatters {
     private static class myLocalDate implements Formatter<LocalDate> {
 
         @Override

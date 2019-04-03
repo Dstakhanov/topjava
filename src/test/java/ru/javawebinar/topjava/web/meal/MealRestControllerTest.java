@@ -63,7 +63,7 @@ class MealRestControllerTest extends AbstractControllerTest {
         Meal returned = readFromJson(action, Meal.class);
         created.setId(returned.getId());
         assertMatch(returned, created);
-        assertMatch(service.getAll(ADMIN_ID), ADMIN_MEAL2, created, ADMIN_MEAL1);
+        assertMatch(service.getAll(START_SEQ), created, MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1);
 
     }
 
@@ -82,10 +82,10 @@ class MealRestControllerTest extends AbstractControllerTest {
     @Test
     void testGetBetween() throws Exception {
         mockMvc.perform(get(REST_URL + "filter")
-                .param("startDate", "2015-05-31").param("startTime", "10:00")
-                .param("endDate", "2015-05-31").param("endTime", "14:00"))
+                .param("startDate", "2015-05-31").param("startTime", "10:00:00")
+                .param("endDate", "2015-05-31").param("endTime", "15:00:00"))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(contentJsonMatcher(createWithExcess(MEAL4, true), createWithExcess(MEAL5, true)));
+                .andExpect(contentJsonMatcher(createWithExcess(MEAL5, true), createWithExcess(MEAL4, true)));
     }
 }
