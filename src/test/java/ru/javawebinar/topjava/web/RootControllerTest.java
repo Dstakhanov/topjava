@@ -36,9 +36,7 @@ class RootControllerTest extends AbstractControllerTest {
         mockMvc.perform(get("/meals")
                 .with(userAuth(USER)))
                 .andDo(print())
-                .andExpect(status().isOk())
                 .andExpect(view().name("meals"))
-                .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"))
-                .andExpect(model().attribute("meals", getWithExcess(MEALS, SecurityUtil.authUserCaloriesPerDay())));
+                .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"));
     }
 }
